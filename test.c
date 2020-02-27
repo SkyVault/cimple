@@ -13,7 +13,8 @@ bool test3(char* os);
 #include "cimple.h"
 
 bool test1(char* os) {
-    sprintf(os+strlen(os), "%s%s\n", CIMPLE_ARROW, "Test 1 sub text");
+    cimp_log(os, "Test 1 is running");
+    cimp_log(os, "This is the second log");
     return true;
 }
 

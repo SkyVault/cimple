@@ -1,13 +1,14 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifndef MACROSTR
 #define MACROSTR(s) #s
 #endif//MACROSTR
 
-#define CIMPLE_VERSION_PATCH "2"
-#define CIMPLE_VERSION_MINOR "1"
+#define CIMPLE_VERSION_PATCH "0"
+#define CIMPLE_VERSION_MINOR "2"
 #define CIMPLE_VERSION_MAJOR "0"
 #define CIMPLE_VERSION CIMPLE_VERSION_MAJOR "." CIMPLE_VERSION_MINOR "." CIMPLE_VERSION_PATCH
 
@@ -40,6 +41,14 @@ bool cimple_no_tests(char* os) {
 #endif//CIMPLE_TESTS
 
 typedef bool (*cimple_test_fn)(char* os);
+
+void cimp_log(char* os, const char* fmt, ...) {
+    va_list args;
+    sprintf(os+strlen(os), "%s%s", CIMPLE_COLOR_NUMBER, CIMPLE_ARROW);
+    sprintf(os+strlen(os), "%s", CIMPLE_COLOR_SUB);
+    sprintf(os+strlen(os), fmt, args);
+    sprintf(os+strlen(os), "\n%s", CIMPLE_COLOR_CLEAR);
+}
 
 bool cimpleRunTests(){
 #define CTEST(test) { .name = MACROSTR(test), .fn = test }
