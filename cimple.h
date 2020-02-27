@@ -11,14 +11,15 @@
 #define CIMPLE_VERSION_MAJOR "0"
 #define CIMPLE_VERSION CIMPLE_VERSION_MAJOR "." CIMPLE_VERSION_MINOR "." CIMPLE_VERSION_PATCH
 
+#define CIMPLE_ARROW "└─> "
+
 bool cimple_no_tests(char* os) {
     sprintf(os+strlen(os), "No tests\n");
     return false;
 }
 
 #ifndef CIMPLE_TESTS
-#define CIMPLE_TESTS\
-    CTEST(cimple_no_tests),
+#define CIMPLE_TESTS CTEST(cimple_no_tests),
 #endif//CIMPLE_TESTS
 
 typedef bool (*cimple_test_fn)(char* os);
@@ -36,7 +37,7 @@ bool cimpleRunTests(){
     char final_output[2048] = {0};
 
     for (size_t i = 0; i < n_tests; i++) {
-        char buffer[512] = {0};
+        char buffer[512] = {[0]='\0'};
         bool result = tests[i].fn(buffer);
 
         const char* status = result ? "PASSED" : "FAILED";
