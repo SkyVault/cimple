@@ -13,6 +13,22 @@
 
 #define CIMPLE_ARROW "└─> "
 
+#ifndef CIMPLE_COLOR_FAIL
+#define CIMPLE_COLOR_FAIL "\033[31;1m"
+#endif//CIMPLE_COLOR_FAIL
+
+#ifndef CIMPLE_COLOR_SUCC
+#define CIMPLE_COLOR_SUCC "\033[32;1m"
+#endif//CIMPLE_COLOR_SUCC
+
+#ifndef CIMPLE_COLOR_CLEAR
+#define CIMPLE_COLOR_CLEAR "\033[m"
+#endif//CIMPLE_COLOR_CLEAR
+
+#ifndef CIMPLE_COLOR_SUB
+#define CIMPLE_COLOR_SUB "\033[36m"
+#endif//CIMPLE_COLOR_SUB
+
 bool cimple_no_tests(char* os) {
     sprintf(os+strlen(os), "%sNo tests defined, see README.md for an example\n", CIMPLE_ARROW);
     return false;
@@ -40,27 +56,32 @@ bool cimpleRunTests(){
         char buffer[512] = {[0]='\0'};
         bool result = tests[i].fn(buffer);
 
-        const char* status = result ? "PASSED" : "FAILED";
+        const char* status = result
+                             ? CIMPLE_COLOR_SUCC "PASSED" CIMPLE_COLOR_CLEAR
+                             : CIMPLE_COLOR_FAIL "FAILED" CIMPLE_COLOR_CLEAR;
 
         if (result) succ++;
 
-        char* color = result
-            ? "\033[32;1m"
-            : "\033[31;1m";
-
-        sprintf(final_output+strlen(final_output), "[%d] <%s> test: %s[%s]\033[m\n",
+        sprintf(final_output+strlen(final_output), "[%d] <%s> test: [%s]\033[m\n",
                 (int)i + 1,
                 tests[i].name,
-                color,
                 status);
 
-        sprintf(final_output+strlen(final_output), "\033[36m%s\033[m", buffer);
+        sprintf(final_output+strlen(final_output),
+                "%s%s%s",
+                CIMPLE_COLOR_SUB,
+                buffer,
+                CIMPLE_COLOR_CLEAR);
     }
 
     bool passed = (n_tests == succ);
 
-    sprintf(final_output+strlen(final_output), "Cimple tests [%s] (%d/%d) (%d%%)\n",
-            (passed?"PASSED":"FAILED"),
+    const char* status = passed
+                         ? CIMPLE_COLOR_SUCC "PASSED" CIMPLE_COLOR_CLEAR
+                         : CIMPLE_COLOR_FAIL "FAILED" CIMPLE_COLOR_CLEAR;       
+
+    sprintf(final_output+strlen(final_output), "Test results: [%s] (%d/%d) (%d%%)\n",
+            status,
             (int)succ,
             (int)n_tests,
             (int)((((float)succ)/(float)n_tests)*100));
