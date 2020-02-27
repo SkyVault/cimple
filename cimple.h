@@ -18,7 +18,7 @@ bool cimple_no_tests(char* os) {
 
 typedef bool (*cimple_test_fn)(char* os);
 
-void cimpleRunTests(){
+bool cimpleRunTests(){
 #define CTEST(test) { .name = MACROSTR(test), .fn = test }
     const struct { const char* name; cimple_test_fn fn; } tests[] = {
         CIMPLE_TESTS
@@ -60,4 +60,6 @@ void cimpleRunTests(){
             (int)((((float)succ)/(float)n_tests)*100));
 
     printf("%s\n", final_output);
+
+    return passed;
 }
