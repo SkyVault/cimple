@@ -6,28 +6,29 @@
 #define MACROSTR(s) #s
 #endif//MACROSTR
 
-#define CIMPLE_VERSION_PATCH "1"
+#define CIMPLE_VERSION_PATCH "2"
 #define CIMPLE_VERSION_MINOR "1"
 #define CIMPLE_VERSION_MAJOR "0"
 #define CIMPLE_VERSION CIMPLE_VERSION_MAJOR "." CIMPLE_VERSION_MINOR "." CIMPLE_VERSION_PATCH
 
 #define CIMPLE_ARROW "└─> "
 
-#ifndef CIMPLE_COLOR_FAIL
-#define CIMPLE_COLOR_FAIL "\033[31;1m"
-#endif//CIMPLE_COLOR_FAIL
-
-#ifndef CIMPLE_COLOR_SUCC
-#define CIMPLE_COLOR_SUCC "\033[32;1m"
-#endif//CIMPLE_COLOR_SUCC
-
-#ifndef CIMPLE_COLOR_CLEAR
-#define CIMPLE_COLOR_CLEAR "\033[m"
-#endif//CIMPLE_COLOR_CLEAR
-
-#ifndef CIMPLE_COLOR_SUB
-#define CIMPLE_COLOR_SUB "\033[36m"
-#endif//CIMPLE_COLOR_SUB
+#ifndef CIMPLE_NO_COLOR
+#define CIMPLE_NO_COLOR
+    #define CIMPLE_COLOR_FAIL     "\033[31;1m"
+    #define CIMPLE_COLOR_SUCC     "\033[32;1m"
+    #define CIMPLE_COLOR_CLEAR    "\033[m"
+    #define CIMPLE_COLOR_SUB      "\033[36m"
+    #define CIMPLE_COLOR_NUMBER   "\033[33;1m"
+    #define CIMPLE_COLOR_FUNC     "\033[30;1m"
+#else
+    #define CIMPLE_COLOR_FAIL     ""
+    #define CIMPLE_COLOR_SUCC     ""
+    #define CIMPLE_COLOR_CLEAR    ""
+    #define CIMPLE_COLOR_SUB      ""
+    #define CIMPLE_COLOR_NUMBER   ""
+    #define CIMPLE_COLOR_FUNC     ""
+#endif//CIMPLE_NO_COLOR
 
 bool cimple_no_tests(char* os) {
     sprintf(os+strlen(os), "%sNo tests defined, see README.md for an example\n", CIMPLE_ARROW);
@@ -62,10 +63,14 @@ bool cimpleRunTests(){
 
         if (result) succ++;
 
-        sprintf(final_output+strlen(final_output), "[%d] <%s> test: [%s]\033[m\n",
+        sprintf(final_output+strlen(final_output), "%s[%d] %s<%s>%s [%s]%s\n",
+                CIMPLE_COLOR_NUMBER,
                 (int)i + 1,
+                CIMPLE_COLOR_FUNC,
                 tests[i].name,
-                status);
+                CIMPLE_COLOR_CLEAR,
+                status,
+                CIMPLE_COLOR_CLEAR);
 
         sprintf(final_output+strlen(final_output),
                 "%s%s%s",
