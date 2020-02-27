@@ -6,6 +6,11 @@
 #define MACROSTR(s) #s
 #endif//MACROSTR
 
+#define CIMPLE_VERSION_PATCH "1"
+#define CIMPLE_VERSION_MINOR "1"
+#define CIMPLE_VERSION_MAJOR "0"
+#define CIMPLE_VERSION CIMPLE_VERSION_MAJOR "." CIMPLE_VERSION_MINOR "." CIMPLE_VERSION_PATCH
+
 bool cimple_no_tests(char* os) {
     sprintf(os+strlen(os), "No tests\n");
     return false;
