@@ -14,7 +14,7 @@
 #define CIMPLE_ARROW "└─> "
 
 bool cimple_no_tests(char* os) {
-    sprintf(os+strlen(os), "No tests\n");
+    sprintf(os+strlen(os), "%sNo tests defined, see README.md for an example\n", CIMPLE_ARROW);
     return false;
 }
 
