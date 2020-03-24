@@ -21,7 +21,7 @@
     #define CIMPLE_COLOR_CLEAR    "\033[m"
     #define CIMPLE_COLOR_SUB      "\033[36m"
     #define CIMPLE_COLOR_NUMBER   "\033[33;1m"
-    #define CIMPLE_COLOR_FUNC     "\033[30;1m"
+    #define CIMPLE_COLOR_FUNC     "\033[35;1m"
 #else
     #define CIMPLE_COLOR_FAIL     ""
     #define CIMPLE_COLOR_SUCC     ""
