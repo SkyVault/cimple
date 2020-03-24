@@ -37,7 +37,7 @@ bool cimple_no_tests(char* os) {
 }
 
 #ifndef CIMPLE_TESTS
-#define CIMPLE_TESTS CTEST(cimple_no_tests),
+#define CIMPLE_TESTS CTEST(cimple_no_tests)
 #endif//CIMPLE_TESTS
 
 typedef bool (*cimple_test_fn)(char* os);
@@ -50,8 +50,12 @@ void cimp_log(char* os, const char* fmt, ...) {
     sprintf(os+strlen(os), "\n%s", CIMPLE_COLOR_CLEAR);
 }
 
+#define CTEST(test) bool test (char* os);
+CIMPLE_TESTS
+#undef CTEST
+
 bool cimpleRunTests(){
-#define CTEST(test) { .name = MACROSTR(test), .fn = test }
+#define CTEST(test) { .name = MACROSTR(test), .fn = test },
     const struct { const char* name; cimple_test_fn fn; } tests[] = {
         CIMPLE_TESTS
     };

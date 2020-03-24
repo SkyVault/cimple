@@ -9,14 +9,10 @@ test.c:
 #include <stdbool.h>
 #include <stdio.h>
 
-bool test1(char* os);
-bool test2(char* os);
-bool test3(char* os);
-
-#define CIMPLE_TESTS                        \
-    CTEST(test1),                           \
-    CTEST(test2),                           \
-    CTEST(test3),
+#define CIMPLE_TESTS                      \
+    CTEST(test1)                          \
+    CTEST(test2)                          \
+    CTEST(test3)
 
 #include "cimple.h"
 
@@ -27,11 +23,13 @@ bool test1(char* os) {
 }
 
 bool test2(char* os) {
-    return false;
+    cimp_log(os, "1 == 2");
+    return 1 == 2;
 }
 
 bool test3(char* os) {
-    return true;
+    cimp_log(os, "\"hello\"[2] == \"hello\"[3]");
+    return "hello"[2] == "hello"[3];
 }
 
 int main() {
