@@ -7,7 +7,7 @@
 #define MACROSTR(s) #s
 #endif//MACROSTR
 
-#define CIMPLE_VERSION_PATCH "2"
+#define CIMPLE_VERSION_PATCH "3"
 #define CIMPLE_VERSION_MINOR "2"
 #define CIMPLE_VERSION_MAJOR "0"
 #define CIMPLE_VERSION CIMPLE_VERSION_MAJOR "." CIMPLE_VERSION_MINOR "." CIMPLE_VERSION_PATCH
@@ -44,10 +44,16 @@ typedef bool (*cimple_test_fn)(char* os);
 
 void cimp_log(char* os, const char* fmt, ...) {
     va_list args;
+    va_start(args, fmt);
+
     sprintf(os+strlen(os), "%s%s", CIMPLE_COLOR_NUMBER, CIMPLE_ARROW);
     sprintf(os+strlen(os), "%s", CIMPLE_COLOR_SUB);
-    sprintf(os+strlen(os), fmt, args);
+
+    vsprintf(os+strlen(os), fmt, args);
+
     sprintf(os+strlen(os), "\n%s", CIMPLE_COLOR_CLEAR);
+
+    va_end(args);
 }
 
 #define CTEST(test) bool test (char* os);
