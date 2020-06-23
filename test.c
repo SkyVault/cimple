@@ -8,19 +8,19 @@
 
 #include "cimple.h"
 
-bool test1(char* os) {
-    cimp_log(os, "Test 1 is running");
-    cimp_log(os, "This is the second log");
+bool test1() {
+    cimp_log("Test 1 is running");
+    cimp_log("This is the second log");
     return true;
 }
 
-bool test2(char* os) {
-    cimp_log(os, "1 == 2");
+bool test2() {
+    cimp_log("1 == 2");
     return 1 == 2;
 }
 
-bool test3(char* os) {
-    cimp_log(os, "\"hello\"[2] == \"hello\"[3]");
+bool test3() {
+    cimp_log("\"hello\"[2] == \"hello\"[3]");
     return "hello"[2] == "hello"[3];
 }
 

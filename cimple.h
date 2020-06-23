@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
 #ifndef MACROSTR
@@ -31,8 +32,10 @@
     #define CIMPLE_COLOR_FUNC     ""
 #endif//CIMPLE_NO_COLOR
 
-bool cimple_no_tests(char* os) {
-    sprintf(os+strlen(os), "%sNo tests defined, see README.md for an example\n", CIMPLE_ARROW);
+void cimp_log(const char* fmt, ...);
+
+bool cimple_no_tests(void) {
+    cimp_log("%sNo tests defined, see README.md for an example\n", CIMPLE_ARROW);
     return false;
 }
 
@@ -40,23 +43,36 @@ bool cimple_no_tests(char* os) {
 #define CIMPLE_TESTS CTEST(cimple_no_tests)
 #endif//CIMPLE_TESTS
 
-typedef bool (*cimple_test_fn)(char* os);
+typedef bool (*cimple_test_fn)(void);
 
-void cimp_log(char* os, const char* fmt, ...) {
+static char* output_buff = NULL;
+
+void cimp_log(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    sprintf(os+strlen(os), "%s%s", CIMPLE_COLOR_NUMBER, CIMPLE_ARROW);
+    char os[2048] = {'\0'};
+    sprintf(os+strlen(os), "%s%s", CIMPLE_COLOR_SUB, CIMPLE_ARROW);
     sprintf(os+strlen(os), "%s", CIMPLE_COLOR_SUB);
-
     vsprintf(os+strlen(os), fmt, args);
-
     sprintf(os+strlen(os), "\n%s", CIMPLE_COLOR_CLEAR);
+
+    size_t len = strlen(os);
+
+    if (output_buff == NULL) {
+        output_buff = malloc(len + 1);
+        strcpy(output_buff, os);
+        output_buff[len] = '\0';
+    } else {
+        output_buff = realloc(output_buff, strlen(output_buff) + len + 1);
+        strcpy(output_buff+strlen(output_buff), os);
+        output_buff[strlen(output_buff) + len] = '\0';
+    }
 
     va_end(args);
 }
 
-#define CTEST(test) bool test (char* os);
+#define CTEST(test) bool test (void);
 CIMPLE_TESTS
 #undef CTEST
 
@@ -70,11 +86,8 @@ bool cimpleRunTests(){
     size_t n_tests = (sizeof(tests)/sizeof(tests[0]));
     size_t succ = 0;
 
-    char final_output[2048] = {0};
-
     for (size_t i = 0; i < n_tests; i++) {
-        char buffer[512] = {[0]='\0'};
-        bool result = tests[i].fn(buffer);
+        bool result = tests[i].fn();
 
         const char* status = result
                              ? CIMPLE_COLOR_SUCC "PASSED" CIMPLE_COLOR_CLEAR
@@ -82,35 +95,38 @@ bool cimpleRunTests(){
 
         if (result) succ++;
 
-        sprintf(final_output+strlen(final_output), "%s[%d] %s<%s>%s [%s]%s\n",
-                CIMPLE_COLOR_NUMBER,
-                (int)i + 1,
-                CIMPLE_COLOR_FUNC,
-                tests[i].name,
-                CIMPLE_COLOR_CLEAR,
-                status,
-                CIMPLE_COLOR_CLEAR);
+        printf("%s[%d] %s<%s>%s [%s]%s\n",
+               CIMPLE_COLOR_NUMBER,
+               (int)i + 1,
+               CIMPLE_COLOR_FUNC,
+               tests[i].name,
+               CIMPLE_COLOR_CLEAR,
+               status,
+               CIMPLE_COLOR_CLEAR);
 
-        sprintf(final_output+strlen(final_output),
-                "%s%s%s",
-                CIMPLE_COLOR_SUB,
-                buffer,
-                CIMPLE_COLOR_CLEAR);
+        printf("%s%s%s",
+               CIMPLE_COLOR_SUB,
+               (output_buff == NULL ? "" : output_buff),
+               CIMPLE_COLOR_CLEAR);
+
+        if (output_buff) {
+            free(output_buff);
+            output_buff = NULL;
+        }
+
     }
 
     bool passed = (n_tests == succ);
 
     const char* status = passed
                          ? CIMPLE_COLOR_SUCC "PASSED" CIMPLE_COLOR_CLEAR
-                         : CIMPLE_COLOR_FAIL "FAILED" CIMPLE_COLOR_CLEAR;       
+                         : CIMPLE_COLOR_FAIL "FAILED" CIMPLE_COLOR_CLEAR;
 
-    sprintf(final_output+strlen(final_output), "Test results: [%s] (%d/%d) (%d%%)\n",
+    printf("Test results: [%s] (%d/%d) (%d%%)\n",
             status,
             (int)succ,
             (int)n_tests,
             (int)((((float)succ)/(float)n_tests)*100));
-
-    printf("%s\n", final_output);
 
     return passed;
 }
